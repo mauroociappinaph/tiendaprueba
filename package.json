@@ -24,6 +24,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^22.14.0",
+    "@vercel/node": "^5.3.11",
     "autoprefixer": "^10.4.21",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.4",
