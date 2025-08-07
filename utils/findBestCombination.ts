@@ -1,4 +1,4 @@
-import { Product } from "../types";
+import { Product } from "@types";
 
 /**
  * Finds the combination of products with the highest total value that does not exceed the budget.
