@@ -1,59 +1,63 @@
-
-import { useState, useMemo, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
-import { CartItem, Product } from '../types';
-
-const CART_STORAGE_KEY = 'shopping-cart';
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { toast } from "react-hot-toast";
+import { CartItem, Product } from "@types";
+import {
+  addToCartApi,
+  getCartApi,
+  changeCartQuantityApi,
+  clearCartApi,
+} from "../services/api";
 
 export const useCart = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  const loadCart = useCallback(async () => {
     try {
-      const storedItems = window.localStorage.getItem(CART_STORAGE_KEY);
-      return storedItems ? JSON.parse(storedItems) : [];
+      const items = await getCartApi();
+      setCartItems(Array.isArray(items) ? items : []);
     } catch (error) {
-      console.error("Failed to read cart from localStorage", error);
-      return [];
+      console.error("Failed to load cart from API", error);
     }
-  });
+  }, []);
 
   useEffect(() => {
+    loadCart();
+  }, [loadCart]);
+
+  const addToCart = async (productToAdd: Product) => {
     try {
-      window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+      const items = await addToCartApi(productToAdd.id);
+      setCartItems(Array.isArray(items) ? items : []);
+      toast.success(`'${productToAdd.name}' añadido al carrito!`);
     } catch (error) {
-      console.error("Failed to save cart to localStorage", error);
+      console.error("Failed to add to cart via API", error);
     }
-  }, [cartItems]);
-
-  const addToCart = (productToAdd: Product) => {
-    setCartItems(prevCart => {
-      const existingItem = prevCart.find(item => item.id === productToAdd.id);
-      if (existingItem) {
-        return prevCart.map(item =>
-          item.id === productToAdd.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
-      return [...prevCart, { ...productToAdd, quantity: 1 }];
-    });
-    toast.success(`'${productToAdd.name}' añadido al carrito!`);
   };
 
-  const changeQuantity = (productId: number, newQuantity: number) => {
-    setCartItems(prevCart => {
-      if (newQuantity <= 0) {
-        return prevCart.filter(item => item.id !== productId);
-      }
-      return prevCart.map(item =>
-        item.id === productId ? { ...item, quantity: newQuantity } : item
-      );
-    });
+  const changeQuantity = async (productId: number, newQuantity: number) => {
+    try {
+      const items = await changeCartQuantityApi(productId, newQuantity);
+      setCartItems(Array.isArray(items) ? items : []);
+    } catch (error) {
+      console.error("Failed to change quantity via API", error);
+    }
   };
 
-  const clearCart = () => {
-    setCartItems([]);
+  const clearCart = async () => {
+    try {
+      const items = await clearCartApi();
+      setCartItems(Array.isArray(items) ? items : []);
+    } catch (error) {
+      console.error("Failed to clear cart via API", error);
+    }
   };
 
   const total = useMemo(() => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const itemsArray = Array.isArray(cartItems) ? cartItems : [];
+    return itemsArray.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
   }, [cartItems]);
 
   return { cartItems, total, addToCart, changeQuantity, clearCart };
