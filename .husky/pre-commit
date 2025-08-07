@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+set -e
+
+echo "🔧 Ejecutando lint-staged..."
+npx lint-staged
+
+echo "🔎 Typecheck..."
+npm run typecheck
