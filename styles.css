@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Global Styles */
+body {
+  /* This uses the 'background' color from the theme */
+  background-color: #F0FDF4; 
+}
+
+/* Custom Scrollbar Styles using theme colors */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  /* This uses the 'background' color from the theme */
+  background: #F0FDF4;
+}
+
+::-webkit-scrollbar-thumb {
+  /* This uses the 'primary' color from the theme */
+  background: #22C55E; 
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+   /* A slightly darker version of the primary color */
+  background: #16a34a;
+}
