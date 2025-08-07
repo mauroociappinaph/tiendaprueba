@@ -1,11 +1,44 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@theme {
+  --color-background: #f0fdf4;
+  --color-surface: #ffffff;
+  --color-primary: #22c55e;
+  --color-primary-light: #d1fae5;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+  --color-danger: #ef4444;
+
+  --font-heading: "Montserrat", "sans-serif";
+  --font-body: "Roboto", "sans-serif";
+  --font-mono: "IBM Plex Mono", "monospace";
+}
 
 /* Custom Global Styles */
+html {
+  scroll-behavior: smooth;
+}
 body {
-  /* This uses the 'background' color from the theme */
-  background-color: #F0FDF4; 
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+::selection {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+}
+code,
+kbd,
+samp {
+  font-family: var(--font-mono);
 }
 
 /* Custom Scrollbar Styles using theme colors */
@@ -15,17 +48,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  /* This uses the 'background' color from the theme */
-  background: #F0FDF4;
+  background: var(--color-background);
 }
 
 ::-webkit-scrollbar-thumb {
-  /* This uses the 'primary' color from the theme */
-  background: #22C55E; 
+  background: var(--color-primary);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-   /* A slightly darker version of the primary color */
+  /* A slightly darker version of the primary color */
   background: #16a34a;
 }

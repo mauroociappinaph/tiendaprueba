@@ -14,7 +14,7 @@ export const ProductList: React.FC<ProductListProps> = ({
         {products.map((product) => (
           <motion.div
             key={product.id}
-            className="bg-surface border border-border rounded-xl p-4 flex flex-col group relative overflow-hidden"
+            className="bg-surface border border-border rounded-xl p-5 flex flex-col group relative overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             whileHover={{
               y: -5,
               boxShadow:
@@ -37,10 +37,10 @@ export const ProductList: React.FC<ProductListProps> = ({
             </div>
             <button
               onClick={() => onAddToCart(product)}
-              className="mt-auto w-full bg-primary border-2 border-primary text-white font-semibold py-2 px-4 rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors flex items-center justify-center group-hover:bg-primary/90"
+              className="mt-2 self-start inline-flex items-center gap-1 bg-primary border border-primary text-white font-medium py-2 px-3 rounded-full hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors text-sm"
               aria-label={`Agregar ${product.name} al carrito`}
             >
-              <Plus className="h-5 w-5 mr-2" />
+              <Plus className="h-4 w-4 mr-1" />
               Agregar al carrito
             </button>
           </motion.div>

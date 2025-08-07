@@ -52,7 +52,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-text-primary font-body">
+    <div className="min-h-screen bg-background text-text-primary font-body">
       <Toaster
         position="bottom-right"
         toastOptions={{

@@ -36,9 +36,9 @@ export const Cart: React.FC<CartProps> = ({
     <>
       <Card className="sticky top-8">
         {cartItems.length === 0 ? (
-          <div className="text-center py-10 relative flex flex-col items-center justify-center">
-            <ShoppingCart className="text-7xl text-gray-200" />
-            <p className="text-text-secondary mt-4">Tu carrito está vacío.</p>
+          <div className="text-center py-14 relative flex flex-col items-center justify-center text-text-secondary">
+            <ShoppingCart className="h-12 w-12 text-gray-300" />
+            <p className="mt-3">Tu carrito está vacío.</p>
             <p className="text-sm text-gray-400">
               Añade productos para verlos aquí.
             </p>
