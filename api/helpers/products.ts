@@ -1,6 +1,6 @@
 import type { VercelResponse } from "@vercel/node";
 import type { Product } from "@types";
-import { products } from "../shared";
+import { productById } from "../shared";
 import { HTTP_STATUS, respondJson } from "./http";
 
 /**
@@ -8,7 +8,7 @@ import { HTTP_STATUS, respondJson } from "./http";
  * No tiene efectos secundarios y es fácilmente testeable.
  */
 export function findProductById(id: number): Product | undefined {
-  return products.find((p) => p.id === id);
+  return productById.get(id);
 }
 
 /**
@@ -17,7 +17,7 @@ export function findProductById(id: number): Product | undefined {
 export function respondProductNotFound(res: VercelResponse) {
   return respondJson(
     res,
-    { error: "Product not found" },
+    { error: "Producto no encontrado" },
     HTTP_STATUS.NOT_FOUND,
   );
 }

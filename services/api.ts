@@ -2,8 +2,10 @@ import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import {
   products as mockProducts,
-  cartQuantities,
   getCartItems,
+  addToCart,
+  setCartQuantity,
+  clearCart,
 } from "../api/shared";
 import { Product, CartItem } from "@types";
 
@@ -24,7 +26,7 @@ export const getCartApi = async (): Promise<CartItem[]> => {
 
 export const changeCartQuantityApi = async (
   productId: number,
-  quantity: number
+  quantity: number,
 ): Promise<CartItem[]> => {
   const response = await axios.patch<CartItem[]>("/api/cart", {
     id: productId,
@@ -55,9 +57,8 @@ if (import.meta && import.meta.env && import.meta.env.DEV) {
       const { id } = JSON.parse(config.data || "{}");
       if (typeof id !== "number") return [400, { error: "Missing product id" }];
       const product = mockProducts.find((p) => p.id === id);
-      if (!product) return [404, { error: "Product not found" }];
-      const current = cartQuantities.get(id) ?? 0;
-      cartQuantities.set(id, current + 1);
+      if (!product) return [404, { error: "Producto no encontrado" }];
+      addToCart(id, 1);
       return [200, getCartItems()];
     } catch {
       return [500, { error: "Invalid request" }];
@@ -71,9 +72,8 @@ if (import.meta && import.meta.env && import.meta.env.DEV) {
         return [400, { error: "Missing id or quantity" }];
       }
       const product = mockProducts.find((p) => p.id === id);
-      if (!product) return [404, { error: "Product not found" }];
-      if (quantity <= 0) cartQuantities.delete(id);
-      else cartQuantities.set(id, quantity);
+      if (!product) return [404, { error: "Producto no encontrado" }];
+      setCartQuantity(id, quantity);
       return [200, getCartItems()];
     } catch {
       return [500, { error: "Invalid request" }];
@@ -81,7 +81,7 @@ if (import.meta && import.meta.env && import.meta.env.DEV) {
   });
 
   mock.onDelete("/api/cart").reply(() => {
-    cartQuantities.clear();
+    clearCart();
     return [200, getCartItems()];
   });
 }

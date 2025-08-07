@@ -43,5 +43,5 @@ export function methodNotAllowed(res: VercelResponse, allowHeader: string) {
   res.setHeader("Allow", allowHeader);
   return res
     .status(HTTP_STATUS.METHOD_NOT_ALLOWED)
-    .json({ error: "Method Not Allowed" });
+    .json({ error: "Método no permitido" });
 }
