@@ -1,7 +1,7 @@
 import type { VercelResponse } from "@vercel/node";
 import type { Product } from "../../types";
-import { productById } from "../shared";
-import { HTTP_STATUS, respondJson } from "./http";
+import { productById } from "../shared.js";
+import { HTTP_STATUS, respondJson } from "./http.js";
 
 /**
  * Función pura: devuelve el producto por id o undefined si no existe.

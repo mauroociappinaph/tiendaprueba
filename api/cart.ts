@@ -1,15 +1,18 @@
-import { getCartItems, addToCart, setCartQuantity, clearCart } from "./shared";
+import {
+  getCartItems,
+  addToCart,
+  setCartQuantity,
+  clearCart,
+} from "./shared.js";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import {
   HTTP_STATUS,
   respondJson,
   respondNoContent,
   methodNotAllowed,
-  isPositiveInteger,
-  isValidProductId,
-  findProductById,
-  respondProductNotFound,
-} from "./helpers";
+} from "./helpers/http.js";
+import { isPositiveInteger, isValidProductId } from "./helpers/validation.js";
+import { findProductById, respondProductNotFound } from "./helpers/products.js";
 
 /**
  * Handler de carrito

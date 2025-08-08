@@ -1,6 +1,6 @@
-import { products } from "./shared";
+import { products } from "./shared.js";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { HTTP_STATUS, respondJson, methodNotAllowed } from "./helpers";
+import { HTTP_STATUS, respondJson, methodNotAllowed } from "./helpers/http.js";
 
 /**
  * Handler de productos

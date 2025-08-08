@@ -1,4 +1,4 @@
-import { Product, CartItem } from "../types";
+import type { Product, CartItem } from "../types";
 
 export const products: Product[] = [
   { id: 1, name: "Producto 1", price: 60 },
