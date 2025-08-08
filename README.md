@@ -1,5 +1,7 @@
 ## Prueba Técnica: API y Carrito de Compras
 
+**Deploy:** [https://tiendaprueba-beta.vercel.app/](https://tiendaprueba-beta.vercel.app/)
+
 Aplicación completa que implementa:
 
 - Backend (API) con endpoints REST para `products` y `cart` (estado en memoria)
@@ -77,6 +79,11 @@ curl -i -X DELETE http://localhost:5173/api/cart
 - Consumo de API y estado:
   - `hooks/useProducts.ts`
   - `hooks/useCart.ts`
+
+### SEO e Icono de pestaña
+
+- Metadatos SEO y Open Graph en `index.html` (título, descripción, keywords, twitter/og, schema.org)
+- Icono de pestaña actualizado: referencia a `public/favicon.svg` en `index.html`
 
 ## Lógica de Presupuesto
 
