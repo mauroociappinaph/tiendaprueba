@@ -4,6 +4,7 @@ import { ShoppingCart, Trash, Plus, Minus } from "lucide-react";
 import { CartItem, CartProps } from "./../types";
 import { Card } from "./Card";
 import { Modal } from "./Modal";
+import { formatCurrency } from "../utils/formatCurrency";
 
 export const Cart: React.FC<CartProps> = ({
   cartItems,
@@ -67,10 +68,13 @@ export const Cart: React.FC<CartProps> = ({
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         <button
-                          onClick={() =>
-                            onQuantityChange(item.id, item.quantity - 1)
-                          }
-                          className="p-1.5 rounded-md bg-gray-100 text-text-secondary hover:bg-gray-200 transition-colors"
+                          onClick={() => {
+                            if (item.quantity > 1) {
+                              onQuantityChange(item.id, item.quantity - 1);
+                            }
+                          }}
+                          disabled={item.quantity <= 1}
+                          className="p-1.5 rounded-md bg-gray-100 text-text-secondary hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100"
                           aria-label={`Disminuir cantidad de ${item.name}`}
                         >
                           <Minus className="h-4 w-4" />
@@ -91,7 +95,9 @@ export const Cart: React.FC<CartProps> = ({
                     </div>
                     <div className="flex flex-col items-end space-y-1 ml-3">
                       <p className="font-bold text-text-primary font-mono">
-                        ${(item.price * item.quantity).toLocaleString()}
+                        {formatCurrency(item.price * item.quantity, {
+                          currency: "USD",
+                        })}
                       </p>
                       <button
                         onClick={() => setItemToDelete(item)}
@@ -109,7 +115,7 @@ export const Cart: React.FC<CartProps> = ({
               <div className="flex justify-between items-center text-xl font-bold mb-4">
                 <span className="text-text-primary">Total:</span>
                 <span className="text-primary font-mono">
-                  ${total.toLocaleString()}
+                  {formatCurrency(total, { currency: "USD" })}
                 </span>
               </div>
               <button

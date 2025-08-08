@@ -9,7 +9,7 @@ const SkeletonBar: React.FC<{ width: string; height?: string }> = ({
 );
 
 const ProductSkeletonCard = () => (
-  <div className="bg-white border border-border rounded-xl p-4 flex flex-col justify-between">
+  <div className="bg-surface border border-border rounded-xl p-4 flex flex-col justify-between">
     <div className="mb-4 text-center space-y-3">
       <SkeletonBar width="w-3/4 mx-auto" />
       <SkeletonBar width="w-1/2 mx-auto" height="h-7" />

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Box, Plus } from "lucide-react";
 import { ProductListProps } from "./../types";
 import { Card } from "./Card";
+import { formatCurrency } from "../utils/formatCurrency";
 
 export const ProductList: React.FC<ProductListProps> = ({
   products,
@@ -32,7 +33,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                 </div>
               </div>
               <p className="text-primary text-3xl font-bold font-mono my-4">
-                ${product.price.toLocaleString()}
+                {formatCurrency(product.price, { currency: "USD" })}
               </p>
             </div>
             <button

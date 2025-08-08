@@ -2,6 +2,7 @@ import React from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { AlertCircle, X } from "lucide-react";
 import { ModalProps } from "./../types";
+import { lockBodyScroll, unlockBodyScroll } from "../utils/scrollLock";
 
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
@@ -12,6 +13,10 @@ export const Modal: React.FC<ModalProps> = ({
   confirmButtonText = "Confirmar",
   cancelButtonText = "Cancelar",
 }) => {
+  const modalRef = React.useRef<HTMLDivElement | null>(null);
+  const previouslyFocusedElementRef = React.useRef<HTMLElement | null>(null);
+  const contentId = React.useId();
+
   const backdropVariants: Variants = {
     visible: { opacity: 1 },
     hidden: { opacity: 0, transition: { when: "afterChildren" } },
@@ -27,19 +32,108 @@ export const Modal: React.FC<ModalProps> = ({
     exit: { y: "50px", opacity: 0, transition: { duration: 0.2 } },
   };
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
       }
+      if (event.key === "Tab" && modalRef.current) {
+        const focusableSelectors = [
+          "a[href]",
+          "button:not([disabled])",
+          "textarea:not([disabled])",
+          "input:not([disabled])",
+          "select:not([disabled])",
+          '[tabindex]:not([tabindex="-1"])',
+        ].join(",");
+        const nodeList =
+          modalRef.current.querySelectorAll<HTMLElement>(focusableSelectors);
+        const focusableElements: HTMLElement[] = Array.from(nodeList);
+        const visibleFocusableElements: HTMLElement[] =
+          focusableElements.filter(
+            (el: HTMLElement) =>
+              !el.hasAttribute("disabled") && el.offsetParent !== null,
+          );
+
+        if (visibleFocusableElements.length === 0) {
+          return;
+        }
+
+        const firstEl: HTMLElement = visibleFocusableElements[0];
+        const lastEl: HTMLElement =
+          visibleFocusableElements[visibleFocusableElements.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+
+        if (!event.shiftKey && active === lastEl) {
+          event.preventDefault();
+          firstEl.focus();
+        } else if (event.shiftKey && active === firstEl) {
+          event.preventDefault();
+          lastEl.focus();
+        }
+      }
     };
 
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
+    if (!isOpen) {
+      return () => {
+        document.removeEventListener("keydown", handleKeyDown);
+      };
     }
+
+    // Guardar foco previo y bloquear scroll del body
+    previouslyFocusedElementRef.current =
+      document.activeElement as HTMLElement | null;
+    lockBodyScroll();
+
+    // Enfocar el primer elemento interactivo dentro del modal
+    requestAnimationFrame(() => {
+      if (!modalRef.current) return;
+      const focusableSelectors = [
+        "button:not([disabled])",
+        "a[href]",
+        "input:not([disabled])",
+        "select:not([disabled])",
+        "textarea:not([disabled])",
+        '[tabindex]:not([tabindex="-1"])',
+      ].join(",");
+      const nodeList =
+        modalRef.current.querySelectorAll<HTMLElement>(focusableSelectors);
+      const first = Array.from(nodeList)[0] as HTMLElement | undefined;
+      if (first) {
+        first.focus();
+      } else {
+        modalRef.current.focus();
+      }
+    });
+
+    const handleFocusIn = (e: FocusEvent) => {
+      if (!modalRef.current) return;
+      if (!modalRef.current.contains(e.target as Node)) {
+        // Si el foco intenta salir, re-dirigir al modal
+        const focusableSelectors = [
+          "button:not([disabled])",
+          "a[href]",
+          "input:not([disabled])",
+          "select:not([disabled])",
+          "textarea:not([disabled])",
+          '[tabindex]:not([tabindex="-1"])',
+        ].join(",");
+        const nodeList =
+          modalRef.current.querySelectorAll<HTMLElement>(focusableSelectors);
+        const first = Array.from(nodeList)[0] as HTMLElement | undefined;
+        if (first) first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("focusin", handleFocusIn);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("focusin", handleFocusIn);
+      // Restaurar scroll y foco
+      unlockBodyScroll();
+      previouslyFocusedElementRef.current?.focus();
     };
   }, [isOpen, onClose]);
 
@@ -55,12 +149,15 @@ export const Modal: React.FC<ModalProps> = ({
           onClick={onClose}
         >
           <motion.div
-            className="bg-surface rounded-2xl p-6 sm:p-8 border border-border shadow-2xl w-full max-w-md mx-4"
+            className="bg-surface rounded-2xl p-6 sm:p-8 border border-border shadow-2xl w-full max-w-md mx-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             variants={modalVariants}
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-title"
+            aria-describedby={children ? contentId : undefined}
+            ref={modalRef}
+            tabIndex={-1}
           >
             <div className="flex justify-between items-start">
               <div className="flex items-center">
@@ -83,12 +180,14 @@ export const Modal: React.FC<ModalProps> = ({
               </button>
             </div>
 
-            <div className="mt-4 text-text-secondary pl-14">{children}</div>
+            <div id={contentId} className="mt-4 text-text-secondary pl-14">
+              {children}
+            </div>
 
             <div className="mt-8 flex justify-end space-x-4">
               <button
                 onClick={onClose}
-                className="bg-white border-2 border-border text-text-primary font-semibold py-2 px-5 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors"
+                className="bg-surface border-2 border-border text-text-primary font-semibold py-2 px-5 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors"
               >
                 {cancelButtonText}
               </button>
