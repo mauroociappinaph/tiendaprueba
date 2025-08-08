@@ -7,7 +7,7 @@ import {
   setCartQuantity,
   clearCart,
 } from "../api/shared";
-import { Product, CartItem } from "@types";
+import { Product, CartItem } from "../types";
 
 export const getProducts = async (): Promise<Product[]> => {
   const response = await axios.get<Product[]>("/api/products");
@@ -40,8 +40,16 @@ export const clearCartApi = async (): Promise<CartItem[]> => {
   return Array.isArray(response.data) ? response.data : [];
 };
 
-// Dev-time axios mocks (only when running vite dev)
-if (import.meta && import.meta.env && import.meta.env.DEV) {
+// Axios mocks en desarrollo, preview local (localhost) o cuando VITE_USE_MOCKS=true
+const isLocalhost =
+  typeof window !== "undefined" && window.location.hostname === "localhost";
+const useMocksEnv =
+  import.meta && import.meta.env && import.meta.env.VITE_USE_MOCKS === "true";
+if (
+  import.meta &&
+  import.meta.env &&
+  (import.meta.env.DEV || isLocalhost || useMocksEnv)
+) {
   const mock = new AxiosMockAdapter(axios, { delayResponse: 200 });
 
   mock.onGet("/api/products").reply(() => {

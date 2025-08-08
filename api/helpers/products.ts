@@ -1,5 +1,5 @@
 import type { VercelResponse } from "@vercel/node";
-import type { Product } from "@types";
+import type { Product } from "../../types";
 import { productById } from "../shared";
 import { HTTP_STATUS, respondJson } from "./http";
 
